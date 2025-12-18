@@ -4,15 +4,14 @@
 {
     "name": "Analytic Brand",
     "summary": """
-        This addon associate an analytic distribution to a brand that will be
-        used as a default value where the brand is used if the analytic
-        accounting is activated""",
-    "version": "16.0.1.0.0",
+        This addon allows to define analytic distribution models using
+        brands in their domains.""",
+    "version": "16.0.2.0.0",
     "license": "AGPL-3",
     "author": "ACSONE SA/NV," "Odoo Community Association (OCA)",
     "website": "https://github.com/OCA/brand",
-    "depends": ["analytic", "brand", "account_brand"],
-    "data": ["views/res_brand.xml"],
+    "depends": ["analytic", "brand"],
+    "data": ["views/account_analytic_distribution_model.xml"],
     "demo": [],
     "maintainers": ["sbejaoui"],
     "external_dependencies": {

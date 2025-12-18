@@ -28,9 +28,8 @@ Analytic Brand
 
 |badge1| |badge2| |badge3| |badge4| |badge5|
 
-This addon associate an analytic distribution to a brand that will be
-used as a default value where the brand is used if the analytic
-accounting is activated.
+This addon allows to define analytic distribution models using brands in
+their domains.
 
 **Table of contents**
 
@@ -51,23 +50,23 @@ Credits
 =======
 
 Authors
-~~~~~~~
+-------
 
 * ACSONE SA/NV
 
 Contributors
-~~~~~~~~~~~~
+------------
 
-* Souheil Bejaoui <souheil.bejaoui@acsone.eu>
-* Ammar Officewala <aofficewala@opensourceintegrators.com>
-* `Heliconia Solutions Pvt. Ltd. <https://www.heliconia.io>`__
+- Souheil Bejaoui <souheil.bejaoui@acsone.eu>
+- Ammar Officewala <aofficewala@opensourceintegrators.com>
+- `Heliconia Solutions Pvt. Ltd. <https://www.heliconia.io>`__
 
-  * Bhavesh Heliconia
+  - Bhavesh Heliconia
 
-* Marie Lejeune <marie.lejeune@acsone.eu/>
+- Marie Lejeune <marie.lejeune@acsone.eu/>
 
 Maintainers
-~~~~~~~~~~~
+-----------
 
 This module is maintained by the OCA.
 
