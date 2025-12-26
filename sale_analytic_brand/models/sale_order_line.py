@@ -21,15 +21,28 @@ class SaleOrderLine(models.Model):
             "brand_id": self.order_id.brand_id.id,
         }
 
-    @api.depends("order_id.brand_id")
+    @staticmethod
+    def _merge_analytic_distribution(base_distribution, extra_distribution):
+        result = dict(base_distribution or {})
+        for account_id, percentage in (extra_distribution or {}).items():
+            result[account_id] = result.get(account_id, 0.0) + percentage
+        return result
+
+    @api.depends("order_id.partner_id", "product_id", "order_id.brand_id")
     def _compute_analytic_distribution(self):
-        res = super()._compute_analytic_distribution()
-        # Patch Odoo method in sale/models/sale_order_line.py to be able
-        # to add parameters inside _get_distribution params.
+        distribution_model = self.env["account.analytic.distribution.model"]
         for line in self:
-            if not line.display_type:
-                distribution = line.env[
-                    "account.analytic.distribution.model"
-                ]._get_distribution(line._get_analytic_distribution_arguments())
-                line.analytic_distribution = distribution or line.analytic_distribution
-        return res
+            if line.display_type:
+                continue
+            arguments = line._get_analytic_distribution_arguments()
+            base_arguments = dict(arguments)
+            base_arguments.pop("brand_id", None)
+            base_distribution = dict(
+                distribution_model._get_distribution(base_arguments) or {}
+            )
+            line.analytic_distribution = base_distribution
+            brand_distribution = distribution_model._get_brand_distribution(arguments)
+            if brand_distribution:
+                line.analytic_distribution = self._merge_analytic_distribution(
+                    base_distribution, brand_distribution
+                )

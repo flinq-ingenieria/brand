@@ -85,3 +85,12 @@ class TestSaleOrderLine(TransactionCase):
                 str(self.analytic_account2.id): 100.0,
             },
         )
+
+    def test_brand_distribution_not_cumulative(self):
+        self.order.brand_id = self.brand
+        self.order.order_line = [Command.create({"product_id": self.product.id})]
+        expected = self.order.order_line.analytic_distribution
+        # Trigger recompute by toggling the brand
+        self.order.brand_id = False
+        self.order.brand_id = self.brand
+        self.assertEqual(self.order.order_line.analytic_distribution, expected)

@@ -15,12 +15,29 @@ class TestAccountMoveLine(TransactionCase):
             }
         )
         cls.partner = cls.env["res.partner"].create({"name": "Test partner"})
+        cls.account = cls.env["account.account"].create(
+            {
+                "name": "Test Expense Account",
+                "code": "XTST",
+                "account_type": "expense",
+            }
+        )
+        cls.journal = cls.env["account.journal"].create(
+            {
+                "name": "Brand Journal",
+                "code": "BRND",
+                "type": "general",
+                "company_id": cls.env.company.id,
+                "default_account_id": cls.account.id,
+            }
+        )
         cls.invoice = cls.env["account.move"].create(
             {
                 "partner_id": cls.partner.id,
+                "move_type": "entry",
+                "journal_id": cls.journal.id,
             }
         )
-        cls.account = cls.env["account.account"].search([], limit=1)
         cls.plan = cls.env["account.analytic.plan"].create(
             {
                 "name": "Test Plan",
@@ -98,3 +115,22 @@ class TestAccountMoveLine(TransactionCase):
                 str(self.analytic_account2.id): 100.0,
             },
         )
+
+    def test_brand_distribution_not_cumulative(self):
+        self.env["account.analytic.distribution.model"].create(
+            {
+                "brand_id": self.brand.id,
+                "analytic_distribution": {str(self.analytic_account.id): 100.0},
+            }
+        )
+        self.invoice.brand_id = self.brand
+        self.invoice.line_ids = [
+            Command.create(
+                {"product_id": self.product.id, "account_id": self.account.id}
+            )
+        ]
+        expected = dict(self.invoice.line_ids.analytic_distribution)
+        self.invoice.brand_id = False
+        self.assertFalse(self.invoice.line_ids.analytic_distribution)
+        self.invoice.brand_id = self.brand
+        self.assertEqual(self.invoice.line_ids.analytic_distribution, expected)

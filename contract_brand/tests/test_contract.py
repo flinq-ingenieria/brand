@@ -39,3 +39,20 @@ class TestContract(TestContractBase):
         self.contract.brand_id = self.brand_id
         for line in self.contract.contract_line_ids:
             self.assertEqual(line.analytic_distribution, analytic_distribution)
+
+    def test_brand_distribution_not_cumulative(self):
+        analytic_distribution = {str(self.analytic_account.id): 100.0}
+        self.env["account.analytic.distribution.model"].create(
+            {
+                "brand_id": self.brand_id.id,
+                "analytic_distribution": analytic_distribution,
+            }
+        )
+        self.contract.brand_id = self.brand_id
+        for line in self.contract.contract_line_ids:
+            self.assertEqual(line.analytic_distribution, analytic_distribution)
+        # Toggle the brand to trigger recompute twice
+        self.contract.brand_id = False
+        self.contract.brand_id = self.brand_id
+        for line in self.contract.contract_line_ids:
+            self.assertEqual(line.analytic_distribution, analytic_distribution)
